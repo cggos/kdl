@@ -5,6 +5,16 @@
 #include <iostream>
 #include <sophus/so3.hpp>
 
+#define DEG2RAD (M_PI / 180)
+#define RAD2DEG (180 / M_PI)
+
+Eigen::Quaterniond YXZ(const Eigen::Vector3d &attitude) {
+  Eigen::AngleAxisd Y(attitude.y(), Eigen::Vector3d::UnitY());
+  Eigen::AngleAxisd X(attitude.x(), Eigen::Vector3d::UnitX());
+  Eigen::AngleAxisd Z(attitude.z(), Eigen::Vector3d::UnitZ());
+  return Y * X * Z;
+}
+
 /**
  * @brief Eigen::UnitRandom(), ref: http://planning.cs.uiuc.edu/node198.html
  * @return
@@ -19,6 +29,27 @@ Eigen::Quaterniond unit_random() {
 }
 
 int main() {
+
+    double pitch = 2.3 * DEG2RAD;
+    double roll = 0 * DEG2RAD;
+    double yaw = 0 * DEG2RAD;
+
+    double pitch1 = 2.5 * DEG2RAD;
+    double roll1 = 0 * DEG2RAD;
+    double yaw1 = 0 * DEG2RAD;
+
+    Eigen::Vector3d start = Eigen::Vector3d(pitch, roll, yaw);
+    Eigen::Vector3d end = Eigen::Vector3d(pitch1, roll1, yaw1);
+
+    Eigen::Quaterniond delta = YXZ(end) * YXZ(start).inverse();
+
+    printf("x = %f\n", delta.matrix().eulerAngles(1, 0, 2).x() * RAD2DEG);
+    printf("y = %f\n", delta.matrix().eulerAngles(1, 0, 2).y() * RAD2DEG);
+    printf("z = %f\n", delta.matrix().eulerAngles(1, 0, 2).z() * RAD2DEG);
+    std::cout << std::endl;
+
+    //------------------------------------------------------------------------------------
+
     // Eigen::Matrix3d R = Eigen::AngleAxisd(M_PI_2, Eigen::Vector3d(0,0,1)).toRotationMatrix();
     Eigen::Matrix3d R(unit_random());
     std::cout << "the random initial rotation matrix R:\n"
