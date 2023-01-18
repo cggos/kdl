@@ -48,6 +48,28 @@ int main() {
     printf("z = %f\n", delta.matrix().eulerAngles(1, 0, 2).z() * RAD2DEG);
     std::cout << std::endl;
 
+    Eigen::Matrix3f mm;
+
+    mm = Eigen::AngleAxisf(0.25*M_PI, Eigen::Vector3f::UnitX())
+      * Eigen::AngleAxisf(0.55*M_PI, Eigen::Vector3f::UnitY())
+      * Eigen::AngleAxisf(0.33*M_PI, Eigen::Vector3f::UnitZ());
+
+    std::cout << "original rotation:" << std::endl;
+    std::cout << mm << std::endl << std::endl;
+
+    Eigen::Vector3f ea = mm.eulerAngles(0, 1, 2); 
+    std::cout << "to Euler angles:" << std::endl;
+    std::cout << ea << std::endl << std::endl;
+
+    Eigen::Matrix3f nn;
+    nn = Eigen::AngleAxisf(ea[0], Eigen::Vector3f::UnitX())
+      * Eigen::AngleAxisf(ea[1], Eigen::Vector3f::UnitY())
+      * Eigen::AngleAxisf(ea[2], Eigen::Vector3f::UnitZ()); 
+
+    std::cout << "recalc original rotation:" << std::endl;
+    std::cout << nn << std::endl;
+    std::cout << std::endl;
+
     //------------------------------------------------------------------------------------
 
     // Eigen::Matrix3d R = Eigen::AngleAxisd(M_PI_2, Eigen::Vector3d(0,0,1)).toRotationMatrix();
